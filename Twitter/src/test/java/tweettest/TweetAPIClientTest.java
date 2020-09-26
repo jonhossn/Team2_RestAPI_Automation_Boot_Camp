@@ -1,7 +1,5 @@
 package tweettest;
 
-
-import com.google.common.base.Verify;
 import io.restassured.response.ValidatableResponse;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
@@ -19,7 +17,7 @@ public class TweetAPIClientTest {
         this.tweetAPIClient=new TweetAPIClient();
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testUserCanTweetSuccessfully(){
         // 1. user send a tweet
         String tweet="We are learning RestAPI Automation"+ UUID.randomUUID().toString();
@@ -30,7 +28,7 @@ public class TweetAPIClientTest {
         Assert.assertEquals(tweet,actualTweet);
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testUserCanNotTweetTheSameTweetTwiceInARow(){
         // 1. user send a tweet
        // String tweet="We are learning RestAPI Automation and Tweet check"+ UUID.randomUUID().toString();
@@ -53,7 +51,7 @@ public class TweetAPIClientTest {
         Assert.assertNotSame("200", 403);
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testDelete(){
         String tweet="We are learning RestAPI Automation and Tweet check";
         ValidatableResponse response=this.tweetAPIClient.deleteTweet(1305277715365404674l);
@@ -62,16 +60,8 @@ public class TweetAPIClientTest {
         String actualTweet=response.extract().body().path("text");
         Assert.assertEquals(tweet,actualTweet);
     }
-//    @Test(enabled = true)
-//    public void testRetweet(){
-//        String retweet="He had an AK15!";
-//        ValidatableResponse response=this.tweetAPIClient.createReTweet(1308916219936935936l);
-//// Verify that the tweet was successfully retweeted
-//        response.statusCode(200);
-//        String actualTweet=response.extract().body().path("text");
-//        Assert.assertEquals(retweet,actualTweet);
-//    }
-    @Test(enabled = false)
+//
+    @Test(enabled = true)
     public void FavoritesTweetID(){
         String tweet="Check user ID042a5d91-b156-4b9d-9dfa-ca94b5638801";
         ValidatableResponse response=this.tweetAPIClient.favoritesTweet(1308874571995664386L);
@@ -81,7 +71,7 @@ public class TweetAPIClientTest {
     }
 
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void TestCreateTweetWithWrongFavoritesEndPoint(){
         String tweet="RestAPI Team @ 2";
         ValidatableResponse response=this.tweetAPIClient.createTweetWithWrongFavoritesInvalidEndPoint(1308829567298285568l);
@@ -124,14 +114,6 @@ public class TweetAPIClientTest {
 //        Assert.assertEquals(tweet,actualTweet);
     }
 
-    @Test(enabled = true)
-    public void testGetStatusLookUp(){
-        String expectedTweet="HELLO hello";
-        ValidatableResponse response=this.tweetAPIClient.getStatusLookUp(1308910218299006976l);
-        response.statusCode(200);
-        String actualTweet=response.extract().body().path("text");
-        Assert.assertEquals(expectedTweet,actualTweet);
-    }
 
     @Test(enabled = true)
     public void testGetRetweets(){
@@ -150,6 +132,71 @@ public class TweetAPIClientTest {
         String actualTweet=response.extract().body().path("text");
         Assert.assertEquals(tweet,actualTweet);
     }
+    /**
+     * Create reTweet with invalid data
+     */
+    @Test(enabled = true)
+    public void testCreateRetweetWithInvalidData(){
+        ValidatableResponse response=this.tweetAPIClient.createReTweetWithInvalidData(1309188858433724422l);
+        int actualReTweet=response.extract().statusCode();
+        Assert.assertEquals(404,actualReTweet);
+    }
+    @Test(enabled = true)
+    public void testUnReTweet(){
+        String tweet="Joe Biden more pro police than Trump.";
+        ValidatableResponse response=this.tweetAPIClient.unReTweet(1308991499418431493l);
+        response.statusCode(200);
+        String actualTweet=response.extract().body().path("text");
+        Assert.assertEquals(tweet,actualTweet);
+    }
 
+    /**
+     * Un reTweet with invalid data
+     */
+    @Test(enabled = true)
+    public void testUnReTweetInvalidId(){
+        ValidatableResponse response=this.tweetAPIClient.unReTweetInvalidID(324236500424335363l);
+        int actualUnRetweet=response.extract().statusCode();
+        Assert.assertEquals(404,actualUnRetweet);
+    }
+
+    @Test(enabled = true)
+    public void testFavoriteListTweetWithInvalidEndpoint(){
+        ValidatableResponse response=this.tweetAPIClient.favoriteListTweetWithInvalidEndPoint("MOHAMMADKISLAM7");
+        int actualCode=response.extract().statusCode();
+        System.out.println(actualCode);
+        Assert.assertEquals(200, actualCode);
+    }
+    /**
+     * Show tweet with invalid data
+     */
+    @Test(enabled = true)
+    public void testShowTweetIDWithInvalidData(){
+        String tweet="Today is cloudy.";
+        ValidatableResponse response=this.tweetAPIClient.showTweetIDWithInvalidData(1309196682865840000l);
+        System.out.println(response.extract().body().asString());
+        int actualCode = response.extract().statusCode();
+        Assert.assertEquals(404, actualCode);
+    }
+    /**
+     * create Status LookUp with valid data
+     */
+    @Test(enabled = true)
+    public void testGetStatusLookUp(){
+        ValidatableResponse response=this.tweetAPIClient.getStatusLookUp(20,"Shohel41710088");
+        int actualResult=response.extract().statusCode();
+        System.out.println(actualResult);
+        System.out.println(response.extract().body().asString());
+        Assert.assertEquals(200,actualResult);
+    }
+    /**
+     * create Status LookUp with invalid data
+     */
+    @Test(enabled = true)
+    public void testGetStatusLookUpWithInvalidData(){
+        ValidatableResponse response=this.tweetAPIClient.getStatusLookUpWithInvalidData(20,"Shohel41710088");
+        int actualResult=response.extract().statusCode();
+        Assert.assertEquals(404,actualResult);
+    }
 
 }
